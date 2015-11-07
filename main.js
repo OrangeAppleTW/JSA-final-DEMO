@@ -4,7 +4,8 @@ var towerButton;
 var cursor;
 var isBuilding = false;
 var towers = [];
-var enemy;
+var enemies = [];
+var enemySpawningTime = 50;
 var enemyPath = [
 	{x:96, y:64},
 	{x:384, y:64},
@@ -15,6 +16,7 @@ var enemyPath = [
 	{x:544, y:96}
 ];
 var hp = 100;
+var clock = 0;
 
 $(window).load(function(){
 	
@@ -39,16 +41,6 @@ function init(){
 		y:416,
 		width: 64,
 		height: 64
-	};
-
-	enemy = {
-		x: 96,
-		y: 448,
-		width: 32,
-		height: 32,
-		speed: 4,
-		pathDes: 0,
-		direction: {x:0, y:-1}
 	};
 
 	$("#gameCanvas").mousemove(function(event) {
@@ -81,7 +73,7 @@ function init(){
 	});
 }
 
-function enemyMove() {
+function enemyMove(enemy) {
 	enemy.x += enemy.direction.x * enemy.speed;
 	enemy.y += enemy.direction.y * enemy.speed;
 	if(		enemyPath[enemy.pathDes].x >= enemy.x
@@ -114,9 +106,31 @@ function enemyMove() {
 	}
 }
 
+function enemiesMove() {
+	for(var _i=0; _i<enemies.length; _i++){
+		enemyMove(enemies[_i]);
+	}
+}
+
+function spawnEnemy(){
+	newEnemy = {
+		x: 96,
+		y: 448,
+		width: 32,
+		height: 32,
+		speed: 2,
+		pathDes: 0,
+		direction: {x:0, y:-1}
+	};
+	enemies.push(newEnemy);
+}
+
 function draw () {
 
-	enemyMove();
+	if(clock%enemySpawningTime===0){
+		spawnEnemy();
+	}
+	enemiesMove();
 
 	ctx.drawImage(bgImg,0,0);
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
@@ -126,9 +140,13 @@ function draw () {
 	for(var _i=0; _i<towers.length; _i++){
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
 	}
-	ctx.drawImage( slimeImg, enemy.x, enemy.y, 32, 32 );
+	for(var _i=0; _i<enemies.length; _i++){
+		ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+	}
 
 	ctx.fillText("HP: "+hp, 16, 32);
+
+	clock++;
 
 }
 
