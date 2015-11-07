@@ -14,6 +14,7 @@ var enemyPath = [
 	{x:544, y:320},
 	{x:544, y:96}
 ];
+var hp = 100;
 
 $(window).load(function(){
 	
@@ -25,10 +26,14 @@ $(window).load(function(){
 function init(){
 	c = document.getElementById("gameCanvas");
 	ctx = c.getContext("2d");
+	ctx.font = "24px Arial";
+	ctx.fillStyle = "white";
+
 	bgImg = document.getElementById("bg-img");
 	towerImg = document.getElementById("tower-img");
 	towerButtonImg = document.getElementById("tower-btn-img");
 	slimeImg = document.getElementById("slime-img");
+
 	towerButton = {
 		x:576, 
 		y:416,
@@ -122,6 +127,9 @@ function draw () {
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
 	}
 	ctx.drawImage( slimeImg, enemy.x, enemy.y, 32, 32 );
+
+	ctx.fillText("HP: "+hp, 16, 32);
+
 }
 
 
