@@ -41,6 +41,16 @@ function init(){
 			isBuilding = !isBuilding;
 			console.log(isBuilding);
 
+		} else {
+			if(isBuilding){
+				var newTower = {
+					x: parseInt(cursor.x/32)*32,
+					y: parseInt(cursor.y/32)*32
+				};
+				towers.push(newTower);
+				console.log(towers);
+				isBuilding = false;
+			}
 		}
 	});
 }
@@ -54,6 +64,9 @@ function draw () {
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
 	if(isBuilding){
 		ctx.drawImage(towerImg, parseInt(cursor.x/32)*32, parseInt(cursor.y/32)*32, 32, 32);
+	}
+	for(var _i=0; _i<towers.length; _i++){
+		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
 	}
 }
 
