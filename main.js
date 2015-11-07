@@ -76,12 +76,7 @@ function init(){
 	});
 }
 
-function getMousePosition(){
-
-}
-
-function draw () {
-
+function enemyMove() {
 	enemy.x += enemy.direction.x * enemy.speed;
 	enemy.y += enemy.direction.y * enemy.speed;
 	if(		enemyPath[enemy.pathDes].x >= enemy.x
@@ -112,6 +107,11 @@ function draw () {
 		}
 
 	}
+}
+
+function draw () {
+
+	enemyMove();
 
 	ctx.drawImage(bgImg,0,0);
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
