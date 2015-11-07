@@ -5,6 +5,15 @@ var cursor;
 var isBuilding = false;
 var towers = [];
 var enemy;
+var enemyPath = [
+	{x:96, y:64},
+	{x:384, y:64},
+	{x:384, y:192},
+	{x:224, y:192},
+	{x:224, y:320},
+	{x:544, y:320},
+	{x:544, y:96}
+];
 
 $(window).load(function(){
 	
@@ -30,7 +39,11 @@ function init(){
 	enemy = {
 		x: 96,
 		y: 448,
-		speed: 1.5
+		width: 32,
+		height: 32,
+		speed: 4,
+		pathDes: 0,
+		direction: {x:0, y:-1}
 	};
 
 	$("#gameCanvas").mousemove(function(event) {
@@ -38,6 +51,7 @@ function init(){
 			x: event.offsetX, 
 			y: event.offsetY
 		};
+		// console.log(cursor.x + "," + cursor.y);
 	});
 
 	$("#gameCanvas").click(function(){
@@ -56,7 +70,6 @@ function init(){
 					y: parseInt(cursor.y/32)*32
 				};
 				towers.push(newTower);
-				console.log(towers);
 				isBuilding = false;
 			}
 		}
@@ -69,7 +82,36 @@ function getMousePosition(){
 
 function draw () {
 
-	enemy.y -= enemy.speed;
+	enemy.x += enemy.direction.x * enemy.speed;
+	enemy.y += enemy.direction.y * enemy.speed;
+	if(		enemyPath[enemy.pathDes].x >= enemy.x
+		&&	enemyPath[enemy.pathDes].x <= enemy.x + enemy.speed
+		&&	enemyPath[enemy.pathDes].y >= enemy.y
+		&&	enemyPath[enemy.pathDes].y <= enemy.y + enemy.speed
+		){
+
+		enemy.x = enemyPath[enemy.pathDes].x;
+		enemy.y = enemyPath[enemy.pathDes].y;
+
+		enemy.pathDes++;
+
+		if( enemyPath[enemy.pathDes].x > enemy.x ){
+			enemy.direction.x = 1;
+		} else if ( enemyPath[enemy.pathDes].x < enemy.x ){
+			enemy.direction.x = -1;
+		} else {
+			enemy.direction.x = 0;
+		}
+
+		if( enemyPath[enemy.pathDes].y > enemy.y ){
+			enemy.direction.y = 1;
+		} else if ( enemyPath[enemy.pathDes].y < enemy.y ){
+			enemy.direction.y = -1;
+		} else {
+			enemy.direction.y = 0;
+		}
+
+	}
 
 	ctx.drawImage(bgImg,0,0);
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
