@@ -4,6 +4,7 @@ var towerButton;
 var cursor;
 var isBuilding = false;
 var towers = [];
+var enemy;
 
 $(window).load(function(){
 	
@@ -18,11 +19,17 @@ function init(){
 	bgImg = document.getElementById("bg-img");
 	towerImg = document.getElementById("tower-img");
 	towerButtonImg = document.getElementById("tower-btn-img");
+	slimeImg = document.getElementById("slime-img");
 	towerButton = {
 		x:576, 
 		y:416,
 		width: 64,
 		height: 64
+	};
+
+	enemy = {
+		x: 96,
+		y: 448
 	};
 
 	$("#gameCanvas").mousemove(function(event) {
@@ -68,6 +75,7 @@ function draw () {
 	for(var _i=0; _i<towers.length; _i++){
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
 	}
+	ctx.drawImage( slimeImg, enemy.x, enemy.y, 32, 32 );
 }
 
 
