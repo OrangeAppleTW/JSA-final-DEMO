@@ -82,27 +82,31 @@ function enemyMove(enemy) {
 		&&	enemyPath[enemy.pathDes].y <= enemy.y + enemy.speed
 		){
 
-		enemy.x = enemyPath[enemy.pathDes].x;
-		enemy.y = enemyPath[enemy.pathDes].y;
-
-		enemy.pathDes++;
-
-		if( enemyPath[enemy.pathDes].x > enemy.x ){
-			enemy.direction.x = 1;
-		} else if ( enemyPath[enemy.pathDes].x < enemy.x ){
-			enemy.direction.x = -1;
+		if (enemy.pathDes === enemyPath.length-1) {
+			enemies.shift();
+			hp -= 10;
 		} else {
-			enemy.direction.x = 0;
-		}
+			enemy.x = enemyPath[enemy.pathDes].x;
+			enemy.y = enemyPath[enemy.pathDes].y;
 
-		if( enemyPath[enemy.pathDes].y > enemy.y ){
-			enemy.direction.y = 1;
-		} else if ( enemyPath[enemy.pathDes].y < enemy.y ){
-			enemy.direction.y = -1;
-		} else {
-			enemy.direction.y = 0;
-		}
+			enemy.pathDes++;
 
+			if( enemyPath[enemy.pathDes].x > enemy.x ){
+				enemy.direction.x = 1;
+			} else if ( enemyPath[enemy.pathDes].x < enemy.x ){
+				enemy.direction.x = -1;
+			} else {
+				enemy.direction.x = 0;
+			}
+
+			if( enemyPath[enemy.pathDes].y > enemy.y ){
+				enemy.direction.y = 1;
+			} else if ( enemyPath[enemy.pathDes].y < enemy.y ){
+				enemy.direction.y = -1;
+			} else {
+				enemy.direction.y = 0;
+			}
+		}
 	}
 }
 
