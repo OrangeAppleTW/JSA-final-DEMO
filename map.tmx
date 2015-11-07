@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="15" tilewidth="32" tileheight="32" nextobjectid="5">
+ <tileset firstgid="1" name="material_0" tilewidth="32" tileheight="32" tilecount="128">
+  <image source="material_0.png" width="256" height="512"/>
+ </tileset>
+ <tileset firstgid="129" name="material_1" tilewidth="32" tileheight="32" tilecount="192">
+  <image source="material_1.png" width="512" height="384"/>
+ </tileset>
+ <tileset firstgid="321" name="material_2" tilewidth="32" tileheight="32" tilecount="256">
+  <image source="material_2.png" trans="ffffff" width="512" height="512"/>
+ </tileset>
+ <layer name="地板" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJzzZGBg8BwiOJhITIp5pKjxgWJc+kg1j5A+WptHbPiRYh4l4T4UzaMkTZKSVilx93AyDwBS5leb
+  </data>
+ </layer>
+ <layer name="圖塊層 3" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJz7w8jA8IeK+A0QUwu8gZpJLTDqPsrAqPsoA6PuowyAzAIAdawukQ==
+  </data>
+ </layer>
+ <layer name="大樹" width="20" height="15">
+  <data encoding="base64" compression="zlib">
+   eJxjYCAPcDIxMHABMTcQ8zCRaQgSkASaIQXE0kAsQwXzNIFmaAGxNhDrUME8S6AZVkBsDcQ2VDBvFIyCUUA6AACzCAJJ
+  </data>
+ </layer>
+</map>
