@@ -29,7 +29,8 @@ function init(){
 
 	enemy = {
 		x: 96,
-		y: 448
+		y: 448,
+		speed: 1.5
 	};
 
 	$("#gameCanvas").mousemove(function(event) {
@@ -67,6 +68,9 @@ function getMousePosition(){
 }
 
 function draw () {
+
+	enemy.y -= enemy.speed;
+
 	ctx.drawImage(bgImg,0,0);
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
 	if(isBuilding){
