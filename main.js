@@ -20,6 +20,7 @@ var hp = 100;
 var money = 50;
 var clock = 0;
 var towerPrice = 25;
+var enemyUpdatePeriod = 200;
 
 $(window).load(function(){
 	
@@ -186,16 +187,17 @@ function enemyMove(enemy) {
 }
 
 function spawnEnemy(){
+	var level = 1+parseInt(clock/enemyUpdatePeriod);
 	newEnemy = {
 		x: 96,
 		y: 448,
 		width: 32,
 		height: 32,
-		speed: 2,
+		speed: 1+level,
 		pathDes: 0,
-		hp: 10,
+		hp: 5+level*5,
 		direction: {x:0, y:-1},
-		money: 3
+		money: 3*level
 	};
 	enemies.push(newEnemy);
 }
