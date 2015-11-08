@@ -101,6 +101,7 @@ function init(){
 							size: 8,
 							speed: 20,
 							damage: this.damage,
+							hitted: false,
 							direction: {
 								x: offsetX/distance,
 								y: offsetY/distance
@@ -109,9 +110,11 @@ function init(){
 								this.x += this.direction.x*this.speed;
 								this.y += this.direction.y*this.speed;
 								for(var _i=0; _i<enemies.length; _i++){
-									var hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
-									if (hitted) {
+									this.hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+									if (this.hitted) {
 										enemies[_i].hp -= this.damage;
+										// 如果不加這行會很慘喔！
+										break;
 									}
 								}
 							}
@@ -230,7 +233,12 @@ function draw () {
 
 	for(var _i=0; _i<cannonBalls.length; _i++){
 		cannonBalls[_i].move();
-		ctx.drawImage( cannonballImg, cannonBalls[_i].x, cannonBalls[_i].y, cannonBalls[_i].size, cannonBalls[_i].size );
+
+		if (cannonBalls[_i].hitted) {
+			cannonBalls.splice(_i,1);
+		} else {
+			ctx.drawImage( cannonballImg, cannonBalls[_i].x, cannonBalls[_i].y, cannonBalls[_i].size, cannonBalls[_i].size );
+		}
 	}
 
 	ctx.fillText("HP: "+hp, 16, 32);
