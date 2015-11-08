@@ -17,7 +17,9 @@ var enemyPath = [
 	{x:544, y:96}
 ];
 var hp = 100;
+var money = 50;
 var clock = 0;
+var towerPrice = 25;
 
 $(window).load(function(){
 	
@@ -60,8 +62,11 @@ function init(){
 			&&	cursor.y < towerButton.y+towerButton.height
 			&&	cursor.y > towerButton.y 						){
 			
-			isBuilding = !isBuilding;
-			console.log(isBuilding);
+			if (!isBuilding && money>=towerPrice) {
+				isBuilding = true;
+			} else {
+				isBuilding = false;
+			}
 
 		} else {
 			if(isBuilding){
@@ -125,6 +130,7 @@ function init(){
 				};
 				towers.push(newTower);
 				isBuilding = false;
+				money -= towerPrice;
 			}
 		}
 	});
@@ -246,6 +252,7 @@ function draw () {
 	}
 
 	ctx.fillText("HP: "+hp, 16, 32);
+	ctx.fillText("Money: "+money, 16, 64);
 
 	clock++;
 
