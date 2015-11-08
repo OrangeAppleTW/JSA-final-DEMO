@@ -1,3 +1,5 @@
+var GAME_TICKER;
+
 var c, ctx;
 var bgImg, towerImg, towerButtonImg;
 var towerButton;
@@ -26,7 +28,7 @@ var score = 0;
 $(window).load(function(){
 	
 	init();
-	setInterval(draw, 40);
+	GAME_TICKER = setInterval(draw, 40);
 
 });
 
@@ -221,6 +223,17 @@ function spawnEnemy(){
 	enemies.push(newEnemy);
 }
 
+function gameover(){
+	ctx.textAlign = "center";
+	ctx.font = "64px Arial";
+	ctx.fillText("GAME OVER", c.width/2, c.height/2-96);
+	ctx.font = "48px Arial";
+	ctx.fillText("you got", c.width/2, c.height/2-32);
+	ctx.font = "128px Arial";
+	ctx.fillText(score, c.width/2, c.height/2+96);
+	clearInterval(GAME_TICKER);
+}
+
 function draw () {
 
 	if(clock%enemySpawningTime===0){
@@ -271,6 +284,10 @@ function draw () {
 
 	ctx.fillText("HP:"+hp+"  Money:"+money, 16, 32);
 	ctx.fillText("Score:"+score, 16, 64);
+
+	if(hp<=0){
+		gameover();
+	}
 
 	clock++;
 
