@@ -21,6 +21,7 @@ var money = 50;
 var clock = 0;
 var towerPrice = 25;
 var enemyUpdatePeriod = 200;
+var score = 0;
 
 $(window).load(function(){
 	
@@ -214,7 +215,8 @@ function spawnEnemy(){
 		pathDes: 0,
 		hp: 5+level*5,
 		direction: {x:0, y:-1},
-		money: 3*level
+		money: 3*level,
+		score: 10*level
 	};
 	enemies.push(newEnemy);
 }
@@ -235,6 +237,7 @@ function draw () {
 		enemyMove(enemies[_i]);
 		if (enemies[_i].hp<=0) {
 			money += enemies[_i].money;
+			score += enemies[_i].score;
 			enemies.splice(_i,1);
 		} else {
 			ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
@@ -266,8 +269,8 @@ function draw () {
 		}
 	}
 
-	ctx.fillText("HP: "+hp, 16, 32);
-	ctx.fillText("Money: "+money, 16, 64);
+	ctx.fillText("HP:"+hp+"  Money:"+money, 16, 32);
+	ctx.fillText("Score:"+score, 16, 64);
 
 	clock++;
 
