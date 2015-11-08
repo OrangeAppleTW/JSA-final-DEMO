@@ -147,10 +147,7 @@ function init(){
 	});
 
 	$("#gameCanvas").click(function(){
-		if( 	cursor.x < towerButton.x+towerButton.width
-			&&	cursor.x > towerButton.x
-			&&	cursor.y < towerButton.y+towerButton.height
-			&&	cursor.y > towerButton.y 						){
+		if( isCollided(cursor.x, cursor.y, towerButton.x, towerButton.y, towerButton.width, towerButton.width) ){
 			
 			if (!isBuilding && money>=towerPrice) {
 				isBuilding = true;
@@ -193,11 +190,7 @@ function isCollided(pointX, pointY, targetX, targetY, targetWidth, targetHeight)
 function enemyMove(enemy) {
 	enemy.x += enemy.direction.x * enemy.speed;
 	enemy.y += enemy.direction.y * enemy.speed;
-	if(		enemyPath[enemy.pathDes].x >= enemy.x
-		&&	enemyPath[enemy.pathDes].x <= enemy.x + enemy.speed
-		&&	enemyPath[enemy.pathDes].y >= enemy.y
-		&&	enemyPath[enemy.pathDes].y <= enemy.y + enemy.speed
-		){
+	if(	isCollided(enemyPath[enemy.pathDes].x, enemyPath[enemy.pathDes].y, enemy.x, enemy.y, enemy.speed, enemy.speed) ){
 
 		if (enemy.pathDes === enemyPath.length-1) {
 			// Refactor this later
