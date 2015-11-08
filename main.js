@@ -185,12 +185,6 @@ function enemyMove(enemy) {
 	}
 }
 
-function enemiesMove() {
-	for(var _i=0; _i<enemies.length; _i++){
-		enemyMove(enemies[_i]);
-	}
-}
-
 function spawnEnemy(){
 	newEnemy = {
 		x: 96,
@@ -210,7 +204,6 @@ function draw () {
 	if(clock%enemySpawningTime===0){
 		spawnEnemy();
 	}
-	enemiesMove();
 
 	ctx.drawImage(bgImg,0,0);
 	ctx.drawImage(towerButtonImg, towerButton.x, towerButton.y, towerButton.width, towerButton.height);
@@ -219,6 +212,7 @@ function draw () {
 	}
 
 	for(var _i=0; _i<enemies.length; _i++){
+		enemyMove(enemies[_i]);
 		if (enemies[_i].hp<=0) {
 			enemies.splice(_i,1);
 		} else {
