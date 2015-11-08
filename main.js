@@ -213,7 +213,11 @@ function draw () {
 	}
 
 	for(var _i=0; _i<enemies.length; _i++){
-		ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+		if (enemies[_i].hp<=0) {
+			enemies.splice(_i,1);
+		} else {
+			ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+		}
 	}
 
 	for(var _i=0; _i<towers.length; _i++){
