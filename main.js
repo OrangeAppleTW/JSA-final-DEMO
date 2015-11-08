@@ -194,7 +194,8 @@ function spawnEnemy(){
 		speed: 2,
 		pathDes: 0,
 		hp: 10,
-		direction: {x:0, y:-1}
+		direction: {x:0, y:-1},
+		money: 3
 	};
 	enemies.push(newEnemy);
 }
@@ -214,6 +215,7 @@ function draw () {
 	for(var _i=0; _i<enemies.length; _i++){
 		enemyMove(enemies[_i]);
 		if (enemies[_i].hp<=0) {
+			money += enemies[_i].money;
 			enemies.splice(_i,1);
 		} else {
 			ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
