@@ -110,6 +110,38 @@ var Enemy = function(){
 	this.direction = {x:0, y:-1},
 	this.money = 3*level;
 	this.score = 10*level;
+	this.move = function(){
+		this.x += this.direction.x * this.speed;
+		this.y += this.direction.y * this.speed;
+		if(	isCollided(enemyPath[this.pathDes].x, enemyPath[this.pathDes].y, this.x, this.y, this.speed, this.speed) ){
+
+			if (this.pathDes === enemyPath.length-1) {
+				this.hp=0;
+				hp -= 10;
+			} else {
+				this.x = enemyPath[this.pathDes].x;
+				this.y = enemyPath[this.pathDes].y;
+
+				this.pathDes++;
+
+				if( enemyPath[this.pathDes].x > this.x ){
+					this.direction.x = 1;
+				} else if ( enemyPath[this.pathDes].x < this.x ){
+					this.direction.x = -1;
+				} else {
+					this.direction.x = 0;
+				}
+
+				if( enemyPath[this.pathDes].y > this.y ){
+					this.direction.y = 1;
+				} else if ( enemyPath[this.pathDes].y < this.y ){
+					this.direction.y = -1;
+				} else {
+					this.direction.y = 0;
+				}
+			}
+		}
+	};
 }
 
 // ================================== //
@@ -187,40 +219,6 @@ function isCollided(pointX, pointY, targetX, targetY, targetWidth, targetHeight)
 	}
 }
 
-function enemyMove(enemy) {
-	enemy.x += enemy.direction.x * enemy.speed;
-	enemy.y += enemy.direction.y * enemy.speed;
-	if(	isCollided(enemyPath[enemy.pathDes].x, enemyPath[enemy.pathDes].y, enemy.x, enemy.y, enemy.speed, enemy.speed) ){
-
-		if (enemy.pathDes === enemyPath.length-1) {
-			// Refactor this later
-			enemies.shift();
-			hp -= 10;
-		} else {
-			enemy.x = enemyPath[enemy.pathDes].x;
-			enemy.y = enemyPath[enemy.pathDes].y;
-
-			enemy.pathDes++;
-
-			if( enemyPath[enemy.pathDes].x > enemy.x ){
-				enemy.direction.x = 1;
-			} else if ( enemyPath[enemy.pathDes].x < enemy.x ){
-				enemy.direction.x = -1;
-			} else {
-				enemy.direction.x = 0;
-			}
-
-			if( enemyPath[enemy.pathDes].y > enemy.y ){
-				enemy.direction.y = 1;
-			} else if ( enemyPath[enemy.pathDes].y < enemy.y ){
-				enemy.direction.y = -1;
-			} else {
-				enemy.direction.y = 0;
-			}
-		}
-	}
-}
-
 function gameover(){
 	ctx.textAlign = "center";
 	ctx.font = "64px Arial";
@@ -246,7 +244,7 @@ function draw () {
 	}
 
 	for(var _i=0; _i<enemies.length; _i++){
-		enemyMove(enemies[_i]);
+		enemies[_i].move();
 		if (enemies[_i].hp<=0) {
 			money += enemies[_i].money;
 			score += enemies[_i].score;
