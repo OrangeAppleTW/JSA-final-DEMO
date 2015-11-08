@@ -36,6 +36,7 @@ function init(){
 	towerButtonImg = document.getElementById("tower-btn-img");
 	slimeImg = document.getElementById("slime-img");
 	crosshairImg = document.getElementById("crosshair-img");
+	cannonballImg = document.getElementById("cannonball-img");
 
 	towerButton = {
 		x:576, 
@@ -67,14 +68,18 @@ function init(){
 					x: parseInt(cursor.x/32)*32,
 					y: parseInt(cursor.y/32)*32,
 					range: 96,
+					fireRate: 10,
+					aimingEnemyId: null,
 					searchEnemy: function(){
 						for(var _i=0; _i<enemies.length; _i++){
 							var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
 							if (distance<=this.range) {
-								enemies[_i].isAimed = true;
+								this.aimingEnemyId = _i;
 								break;
 							}
 						}
+						// 如果都沒找到，會進到這行，清除鎖定的目標
+						this.aimingEnemyId = null;
 					}
 				};
 				towers.push(newTower);
@@ -135,8 +140,7 @@ function spawnEnemy(){
 		height: 32,
 		speed: 2,
 		pathDes: 0,
-		direction: {x:0, y:-1},
-		isAimed: false
+		direction: {x:0, y:-1}
 	};
 	enemies.push(newEnemy);
 }
@@ -153,15 +157,18 @@ function draw () {
 	if(isBuilding){
 		ctx.drawImage(towerImg, parseInt(cursor.x/32)*32, parseInt(cursor.y/32)*32, 32, 32);
 	}
+
+	for(var _i=0; _i<enemies.length; _i++){
+		ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+	}
+
 	for(var _i=0; _i<towers.length; _i++){
 		towers[_i].searchEnemy();
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
-	}
-	for(var _i=0; _i<enemies.length; _i++){
-		ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
-		if ( enemies[_i].isAimed ) {
-			ctx.drawImage( crosshairImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
-			enemies[_i].isAimed = false; //如果沒有這行，即使敵人離開了，還是會被鎖定喔
+		console.log(towers[_i].aimingEnemyId);
+		if ( towers[_i].aimingEnemyId!=null ) {
+			var id = towers[_i].aimingEnemyId;
+			ctx.drawImage( crosshairImg, enemies[id].x, enemies[id].y, enemies[id].width, enemies[id].height );
 		}
 	}
 
