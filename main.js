@@ -102,6 +102,10 @@ function init(){
 							direction: {
 								x: offsetX/distance,
 								y: offsetY/distance
+							},
+							move: function(){
+								this.x += this.direction.x*this.speed;
+								this.y += this.direction.y*this.speed;
 							}
 						};
 						cannonBalls.push(newConnonBall);
@@ -204,8 +208,7 @@ function draw () {
 	}
 
 	for(var _i=0; _i<cannonBalls.length; _i++){
-		cannonBalls[_i].x += cannonBalls[_i].direction.x*cannonBalls[_i].speed;
-		cannonBalls[_i].y += cannonBalls[_i].direction.y*cannonBalls[_i].speed;
+		cannonBalls[_i].move();
 		ctx.drawImage( cannonballImg, cannonBalls[_i].x, cannonBalls[_i].y, cannonBalls[_i].size, cannonBalls[_i].size );
 	}
 
