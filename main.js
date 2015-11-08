@@ -72,6 +72,7 @@ function init(){
 							var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
 							if (distance<=this.range) {
 								enemies[_i].isAimed = true;
+								break;
 							}
 						}
 					}
