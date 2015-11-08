@@ -35,6 +35,7 @@ function init(){
 	towerImg = document.getElementById("tower-img");
 	towerButtonImg = document.getElementById("tower-btn-img");
 	slimeImg = document.getElementById("slime-img");
+	crosshairImg = document.getElementById("crosshair-img");
 
 	towerButton = {
 		x:576, 
@@ -64,7 +65,16 @@ function init(){
 			if(isBuilding){
 				var newTower = {
 					x: parseInt(cursor.x/32)*32,
-					y: parseInt(cursor.y/32)*32
+					y: parseInt(cursor.y/32)*32,
+					range: 96,
+					searchEnemy: function(){
+						for(var _i=0; _i<enemies.length; _i++){
+							var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
+							if (distance<=this.range) {
+								enemies[_i].isAimed = true;
+							}
+						}
+					}
 				};
 				towers.push(newTower);
 				isBuilding = false;
@@ -124,7 +134,8 @@ function spawnEnemy(){
 		height: 32,
 		speed: 2,
 		pathDes: 0,
-		direction: {x:0, y:-1}
+		direction: {x:0, y:-1},
+		isAimed: false
 	};
 	enemies.push(newEnemy);
 }
@@ -142,10 +153,15 @@ function draw () {
 		ctx.drawImage(towerImg, parseInt(cursor.x/32)*32, parseInt(cursor.y/32)*32, 32, 32);
 	}
 	for(var _i=0; _i<towers.length; _i++){
+		towers[_i].searchEnemy();
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
 	}
 	for(var _i=0; _i<enemies.length; _i++){
 		ctx.drawImage( slimeImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+		if ( enemies[_i].isAimed ) {
+			ctx.drawImage( crosshairImg, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+			enemies[_i].isAimed = false; //如果沒有這行，即使敵人離開了，還是會被鎖定喔
+		}
 	}
 
 	ctx.fillText("HP: "+hp, 16, 32);
