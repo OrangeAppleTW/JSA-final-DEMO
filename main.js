@@ -69,69 +69,85 @@ function init(){
 				isBuilding = false;
 			}
 
-		} else {
-			if(isBuilding){
-				var newTower = {
-					x: parseInt(cursor.x/32)*32,
-					y: parseInt(cursor.y/32)*32,
-					width: 32,
-					width: 32,
-					range: 96,
-					fireRate: 16,
-					damage: 4,
-					readyToShootTime: 10,
-					aimingEnemyId: null,
-					searchEnemy: function(){
-						for(var _i=0; _i<enemies.length; _i++){
-							var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
-							if (distance<=this.range) {
-								this.aimingEnemyId = _i;
-								return;
-							}
+		} else if(isBuilding){
+			var newTower = {
+				x: parseInt(cursor.x/32)*32,
+				y: parseInt(cursor.y/32)*32,
+				width: 32,
+				height: 32,
+				level: 1,
+				range: 96,
+				fireRate: 16,
+				damage: 4,
+				readyToShootTime: 10,
+				aimingEnemyId: null,
+				searchEnemy: function(){
+					for(var _i=0; _i<enemies.length; _i++){
+						var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
+						if (distance<=this.range) {
+							this.aimingEnemyId = _i;
+							return;
 						}
-						// 如果都沒找到，會進到這行，清除鎖定的目標
-						this.aimingEnemyId = null;
-					},
-					shoot: function(){
-						var aimedEnemy = enemies[this.aimingEnemyId];
-						var offsetX = aimedEnemy.x - this.x;
-						var offsetY = aimedEnemy.y - this.y;
-						var distance = Math.sqrt( Math.pow(offsetX,2) + Math.pow(offsetY,2) );
-						var newConnonBall = {
-							startingPoint: {
-								x: this.x+this.width/2,
-								y: this.y
-							},
+					}
+					// 如果都沒找到，會進到這行，清除鎖定的目標
+					this.aimingEnemyId = null;
+				},
+				upgrade: function(){
+					this.level++;
+					this.range = 64+32*this.level;
+					this.damage = 2+2*this.level;
+					this.fireRate = 16-2*(this.level-1);
+				},
+				shoot: function(){
+					var aimedEnemy = enemies[this.aimingEnemyId];
+					var offsetX = aimedEnemy.x - this.x;
+					var offsetY = aimedEnemy.y - this.y;
+					var distance = Math.sqrt( Math.pow(offsetX,2) + Math.pow(offsetY,2) );
+					var newConnonBall = {
+						startingPoint: {
 							x: this.x+this.width/2,
-							y: this.y,
-							size: 8,
-							speed: 20,
-							damage: this.damage,
-							hitted: false,
-							direction: {
-								x: offsetX/distance,
-								y: offsetY/distance
-							},
-							move: function(){
-								this.x += this.direction.x*this.speed;
-								this.y += this.direction.y*this.speed;
-								for(var _i=0; _i<enemies.length; _i++){
-									this.hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
-									if (this.hitted) {
-										enemies[_i].hp -= this.damage;
-										// 如果不加這行會很慘喔！
-										break;
-									}
+							y: this.y
+						},
+						x: this.x+this.width/2,
+						y: this.y,
+						size: 8,
+						speed: 5+5*this.level,
+						damage: this.damage,
+						hitted: false,
+						direction: {
+							x: offsetX/distance,
+							y: offsetY/distance
+						},
+						move: function(){
+							this.x += this.direction.x*this.speed;
+							this.y += this.direction.y*this.speed;
+							for(var _i=0; _i<enemies.length; _i++){
+								this.hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+								if (this.hitted) {
+									enemies[_i].hp -= this.damage;
+									// 如果不加這行會很慘喔！
+									break;
 								}
 							}
-						};
-						cannonBalls.push(newConnonBall);
-						this.readyToShootTime = this.fireRate;
+						}
+					};
+					cannonBalls.push(newConnonBall);
+					this.readyToShootTime = this.fireRate;
+				}
+			};
+			towers.push(newTower);
+			isBuilding = false;
+			money -= towerPrice;
+		} else {
+			for(var _i=0; _i<towers.length; _i++){
+				var touched = isCollided(cursor.x, cursor.y, towers[_i].x, towers[_i].y, towers[_i].width, towers[_i].height);
+				if(touched){
+					if(money>=towerPrice){
+						towers[_i].upgrade();
+						money -= towerPrice;
 					}
-				};
-				towers.push(newTower);
-				isBuilding = false;
-				money -= towerPrice;
+					break;
+				}
 			}
 		}
 	});
