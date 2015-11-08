@@ -25,11 +25,98 @@ var towerPrice = 25;
 var enemyUpdatePeriod = 200;
 var score = 0;
 
+// ========= Classes =========== //
+
+var Tower = function(){
+	this.x = parseInt(cursor.x/32)*32;
+	this.y = parseInt(cursor.y/32)*32;
+	this.width = 32;
+	this.height = 32;
+	this.level = 1;
+	this.range = 96;
+	this.fireRate = 16;
+	this.damage = 4;
+	this.readyToShootTime = 10;
+	this.aimingEnemyId = null;
+	this.searchEnemy = function(){
+		for(var _i=0; _i<enemies.length; _i++){
+			var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
+			if (distance<=this.range) {
+				this.aimingEnemyId = _i;
+				return;
+			}
+		}
+		// 如果都沒找到，會進到這行，清除鎖定的目標
+		this.aimingEnemyId = null;
+	};
+	this.upgrade = function(){
+		this.level++;
+		this.range = 64+32*this.level;
+		this.damage = 2+2*this.level;
+		this.fireRate = 16-2*(this.level-1);
+	};
+	this.shoot = function(){
+		var newConnonBall = new ConnonBall(this);
+		cannonBalls.push(newConnonBall);
+		this.readyToShootTime = this.fireRate;
+	}
+};
+
+var ConnonBall = function(tower){
+
+	var aimedEnemy = enemies[tower.aimingEnemyId];
+	var offsetX = aimedEnemy.x - tower.x;
+	var offsetY = aimedEnemy.y - tower.y;
+	var distance = Math.sqrt( Math.pow(offsetX,2) + Math.pow(offsetY,2) );
+
+	this.startingPoint = {
+		x: tower.x+tower.width/2,
+		y: tower.y
+	};
+	this.x = tower.x+tower.width/2;
+	this.y = tower.y;
+	this.size = 8;
+	this.speed = 5+5*tower.level;
+	this.damage = tower.damage;
+	this.hitted = false;
+	this.direction = {
+		x: offsetX/distance,
+		y: offsetY/distance
+	};
+	this.move = function(){
+		this.x += this.direction.x*this.speed;
+		this.y += this.direction.y*this.speed;
+		for(var _i=0; _i<enemies.length; _i++){
+			this.hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+			if (this.hitted) {
+				enemies[_i].hp -= this.damage;
+				// 如果不加這行會很慘喔！
+				break;
+			}
+		}
+	};
+};
+
+var Enemy = function(){
+	var level = 1+parseInt(clock/enemyUpdatePeriod);
+
+	this.x = 96;
+	this.y = 448;
+	this.width = 32;
+	this.height = 32;
+	this.speed = 1+level;
+	this.pathDes = 0;
+	this.hp = 5+level*5;
+	this.direction = {x:0, y:-1},
+	this.money = 3*level;
+	this.score = 10*level;
+}
+
+// ================================== //
+
 $(window).load(function(){
-	
 	init();
 	GAME_TICKER = setInterval(draw, 40);
-
 });
 
 function init(){
@@ -57,7 +144,6 @@ function init(){
 			x: event.offsetX, 
 			y: event.offsetY
 		};
-		// console.log(cursor.x + "," + cursor.y);
 	});
 
 	$("#gameCanvas").click(function(){
@@ -73,71 +159,7 @@ function init(){
 			}
 
 		} else if(isBuilding){
-			var newTower = {
-				x: parseInt(cursor.x/32)*32,
-				y: parseInt(cursor.y/32)*32,
-				width: 32,
-				height: 32,
-				level: 1,
-				range: 96,
-				fireRate: 16,
-				damage: 4,
-				readyToShootTime: 10,
-				aimingEnemyId: null,
-				searchEnemy: function(){
-					for(var _i=0; _i<enemies.length; _i++){
-						var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
-						if (distance<=this.range) {
-							this.aimingEnemyId = _i;
-							return;
-						}
-					}
-					// 如果都沒找到，會進到這行，清除鎖定的目標
-					this.aimingEnemyId = null;
-				},
-				upgrade: function(){
-					this.level++;
-					this.range = 64+32*this.level;
-					this.damage = 2+2*this.level;
-					this.fireRate = 16-2*(this.level-1);
-				},
-				shoot: function(){
-					var aimedEnemy = enemies[this.aimingEnemyId];
-					var offsetX = aimedEnemy.x - this.x;
-					var offsetY = aimedEnemy.y - this.y;
-					var distance = Math.sqrt( Math.pow(offsetX,2) + Math.pow(offsetY,2) );
-					var newConnonBall = {
-						startingPoint: {
-							x: this.x+this.width/2,
-							y: this.y
-						},
-						x: this.x+this.width/2,
-						y: this.y,
-						size: 8,
-						speed: 5+5*this.level,
-						damage: this.damage,
-						hitted: false,
-						direction: {
-							x: offsetX/distance,
-							y: offsetY/distance
-						},
-						move: function(){
-							this.x += this.direction.x*this.speed;
-							this.y += this.direction.y*this.speed;
-							for(var _i=0; _i<enemies.length; _i++){
-								this.hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
-								if (this.hitted) {
-									enemies[_i].hp -= this.damage;
-									// 如果不加這行會很慘喔！
-									break;
-								}
-							}
-						}
-					};
-					cannonBalls.push(newConnonBall);
-					this.readyToShootTime = this.fireRate;
-				}
-			};
+			var newTower = new Tower();
 			towers.push(newTower);
 			isBuilding = false;
 			money -= towerPrice;
@@ -206,23 +228,6 @@ function enemyMove(enemy) {
 	}
 }
 
-function spawnEnemy(){
-	var level = 1+parseInt(clock/enemyUpdatePeriod);
-	newEnemy = {
-		x: 96,
-		y: 448,
-		width: 32,
-		height: 32,
-		speed: 1+level,
-		pathDes: 0,
-		hp: 5+level*5,
-		direction: {x:0, y:-1},
-		money: 3*level,
-		score: 10*level
-	};
-	enemies.push(newEnemy);
-}
-
 function gameover(){
 	ctx.textAlign = "center";
 	ctx.font = "64px Arial";
@@ -237,7 +242,8 @@ function gameover(){
 function draw () {
 
 	if(clock%enemySpawningTime===0){
-		spawnEnemy();
+		var newEnemy = new Enemy();
+		enemies.push(newEnemy);
 	}
 
 	ctx.drawImage(bgImg,0,0);
@@ -292,9 +298,3 @@ function draw () {
 	clock++;
 
 }
-
-
-
-
-
-
