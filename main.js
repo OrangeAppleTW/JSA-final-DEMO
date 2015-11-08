@@ -72,6 +72,7 @@ function init(){
 					width: 32,
 					range: 96,
 					fireRate: 16,
+					damage: 4,
 					readyToShootTime: 10,
 					aimingEnemyId: null,
 					searchEnemy: function(){
@@ -99,6 +100,7 @@ function init(){
 							y: this.y,
 							size: 8,
 							speed: 20,
+							damage: this.damage,
 							direction: {
 								x: offsetX/distance,
 								y: offsetY/distance
@@ -106,6 +108,12 @@ function init(){
 							move: function(){
 								this.x += this.direction.x*this.speed;
 								this.y += this.direction.y*this.speed;
+								for(var _i=0; _i<enemies.length; _i++){
+									var hitted =  isCollided(this.x, this.y, enemies[_i].x, enemies[_i].y, enemies[_i].width, enemies[_i].height );
+									if (hitted) {
+										enemies[_i].hp -= this.damage;
+									}
+								}
 							}
 						};
 						cannonBalls.push(newConnonBall);
@@ -117,6 +125,18 @@ function init(){
 			}
 		}
 	});
+}
+
+function isCollided(pointX, pointY, targetX, targetY, targetWidth, targetHeight) {
+	if(		pointX >= targetX
+		&&	pointX <= targetX + targetWidth
+		&&	pointY >= targetY
+		&&	pointY <= targetY + targetHeight
+	){
+		return true;
+	} else {
+		return false;
+	}
 }
 
 function enemyMove(enemy) {
@@ -170,6 +190,7 @@ function spawnEnemy(){
 		height: 32,
 		speed: 2,
 		pathDes: 0,
+		hp: 10,
 		direction: {x:0, y:-1}
 	};
 	enemies.push(newEnemy);
