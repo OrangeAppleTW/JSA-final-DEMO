@@ -175,6 +175,7 @@ function enemyMove(enemy) {
 		){
 
 		if (enemy.pathDes === enemyPath.length-1) {
+			// Refactor this later
 			enemies.shift();
 			hp -= 10;
 		} else {
