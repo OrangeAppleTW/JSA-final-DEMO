@@ -5,6 +5,7 @@ var cursor;
 var isBuilding = false;
 var towers = [];
 var enemies = [];
+var cannonBalls = [];
 var enemySpawningTime = 50;
 var enemyPath = [
 	{x:96, y:64},
@@ -67,19 +68,44 @@ function init(){
 				var newTower = {
 					x: parseInt(cursor.x/32)*32,
 					y: parseInt(cursor.y/32)*32,
+					width: 32,
+					width: 32,
 					range: 96,
-					fireRate: 10,
+					fireRate: 16,
+					readyToShootTime: 10,
 					aimingEnemyId: null,
 					searchEnemy: function(){
 						for(var _i=0; _i<enemies.length; _i++){
 							var distance = Math.sqrt( Math.pow(this.x-enemies[_i].x,2) + Math.pow(this.y-enemies[_i].y,2) );
 							if (distance<=this.range) {
 								this.aimingEnemyId = _i;
-								break;
+								return;
 							}
 						}
 						// 如果都沒找到，會進到這行，清除鎖定的目標
 						this.aimingEnemyId = null;
+					},
+					shoot: function(){
+						var aimedEnemy = enemies[this.aimingEnemyId];
+						var offsetX = aimedEnemy.x - this.x;
+						var offsetY = aimedEnemy.y - this.y;
+						var distance = Math.sqrt( Math.pow(offsetX,2) + Math.pow(offsetY,2) );
+						var newConnonBall = {
+							startingPoint: {
+								x: this.x+this.width/2,
+								y: this.y
+							},
+							x: this.x+this.width/2,
+							y: this.y,
+							size: 8,
+							speed: 20,
+							direction: {
+								x: offsetX/distance,
+								y: offsetY/distance
+							}
+						};
+						cannonBalls.push(newConnonBall);
+						this.readyToShootTime = this.fireRate;
 					}
 				};
 				towers.push(newTower);
@@ -165,11 +191,22 @@ function draw () {
 	for(var _i=0; _i<towers.length; _i++){
 		towers[_i].searchEnemy();
 		ctx.drawImage(towerImg, towers[_i].x, towers[_i].y, 32, 32);
-		console.log(towers[_i].aimingEnemyId);
 		if ( towers[_i].aimingEnemyId!=null ) {
 			var id = towers[_i].aimingEnemyId;
 			ctx.drawImage( crosshairImg, enemies[id].x, enemies[id].y, enemies[id].width, enemies[id].height );
+			if ( towers[_i].readyToShootTime === 0 ){
+				towers[_i].shoot();
+			}
 		}
+		if(towers[_i].readyToShootTime>0){
+			towers[_i].readyToShootTime--;
+		}
+	}
+
+	for(var _i=0; _i<cannonBalls.length; _i++){
+		cannonBalls[_i].x += cannonBalls[_i].direction.x*cannonBalls[_i].speed;
+		cannonBalls[_i].y += cannonBalls[_i].direction.y*cannonBalls[_i].speed;
+		ctx.drawImage( cannonballImg, cannonBalls[_i].x, cannonBalls[_i].y, cannonBalls[_i].size, cannonBalls[_i].size );
 	}
 
 	ctx.fillText("HP: "+hp, 16, 32);
